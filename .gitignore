@@ -1,0 +1,8 @@
+.vscode/
+__pycache__/
+build/*
+train*/
+agent*/
+.idea/
+
+!build/.gitkeep
