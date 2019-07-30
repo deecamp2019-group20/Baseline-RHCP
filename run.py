@@ -6,6 +6,13 @@ from env import Env as CEnv
 
 
 class Env(CEnv):
+    def __init__(self, debug=False):
+        pass
+
+    @property
+    def face(self):
+        return [[[]]]
+
     @property
     def valid_actions(self):
         return [[]]
@@ -32,13 +39,16 @@ def ai_play():
             # lord first
             state = env.face
             action = lord.e_greedy_action(state, env.valid_actions)  # 获取AI的动作
+            # 下一步是交互步：
+            #   地主的话第一个参数是True，农民的话，第一个参数是False；
+            #   第二个参数的格式和下面两个中文表示的变量格式一致
             _, r, _ = env.step(True, action)
             if r == -1:  # 地主赢
                 reward = 100
             else:
-                _, r, _ = env.step_auto()  # 下家
+                下家采取的动作, r, _ = env.step_auto()  # 下家
                 if r == 0:
-                    _, r, _ = env.step_auto()  # 上家
+                    上家采取的动作, r, _ = env.step_auto()  # 上家
                 if r == 0:
                     reward = 0
                 else:  # r == 1，地主输
