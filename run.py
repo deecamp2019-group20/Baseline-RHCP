@@ -1,7 +1,52 @@
 import sys
+
 sys.path.insert(0, 'build/Release')
 
 from env import Env as CEnv
+
+
+class Env(CEnv):
+    @property
+    def valid_actions(self):
+        return [[]]
+
+
+class CQL:
+    def e_greedy_action(self, *args, **kwargs):
+        return 0
+
+    def perceive(self, *args, **kwargs):
+        pass
+
+
+def ai_play():
+    env = Env(debug=True)
+    lord = CQL()
+    lord_win, farmer_win = 0, 0
+    for episode in range(3000):
+        print('begin')
+        env.reset()
+        env.prepare()
+        r = 0
+        while r == 0:  # r == -1 地主赢， r == 1，农民赢
+            # lord first
+            state = env.face
+            action = lord.e_greedy_action(state, env.valid_actions)  # 获取AI的动作
+            _, r, _ = env.step(True, action)
+            if r == -1:  # 地主赢
+                reward = 100
+            else:
+                _, r, _ = env.step_auto()  # 下家
+                if r == 0:
+                    _, r, _ = env.step_auto()  # 上家
+                if r == 0:
+                    reward = 0
+                else:  # r == 1，地主输
+                    reward = -100
+            done = (r != 0)
+            lord.perceive(state, action, reward, env.face, done)  # 对AI的reward反馈
+            if done:
+                break
 
 
 def 自娱自乐():  # 地主胜率 50%
