@@ -6,7 +6,7 @@
 
 - 安装依赖项 `pip install pybind11`
 
-- 先运行
+- 运行
     ```bash
     cd build
     cmake ..
