@@ -41,7 +41,7 @@ def ai_play():
             action = lord.e_greedy_action(state, env.valid_actions)  # 获取AI的动作
             # 下一步是交互步：
             #   参数的格式和下面两个中文表示的变量格式一致
-            _, r, _ = env.step_manual(True, action)
+            _, r, _ = env.step_manual(action)
             if r == -1:  # 地主赢
                 reward = 100
             else:
