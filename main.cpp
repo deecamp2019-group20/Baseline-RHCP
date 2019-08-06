@@ -642,9 +642,6 @@ public:
 //        }
 //        normalize(remains, 0, 60);
 
-        vector<int> extra_cards(std::begin(clsGameSituation->DiPai), std::end(clsGameSituation->DiPai));
-        extra_cards = toOneHot60(extra_cards);
-
         vector<float> prob1(remains.begin(), remains.end());
         vector<float> prob2(remains.begin(), remains.end());
         int size1 = arrHandCardData[(indexID + 1) % 3].color_nHandCardList.size();
@@ -683,6 +680,39 @@ public:
         }
         return result;
     }
+
+
+	// 输出另外两个人手牌的概率
+	py::array_t<float> getStateProbManual(vector<int> &history, int size1, int size2) {
+		std::vector<float> state;
+		std::vector<int> total(60, 1);
+		total[53] = total[54] = total[55] = 0;
+		total[57] = total[58] = total[59] = 0;
+
+		std::vector<int> remains = total;
+
+		remains = remains - history;
+
+		vector<float> prob1(remains.begin(), remains.end());
+		vector<float> prob2(remains.begin(), remains.end());
+		for (int i = 0; i < remains.size(); i++) {
+			prob1[i] *= float(size1) / (size1 + size2);
+			prob2[i] *= float(size2) / (size1 + size2);
+		}
+
+		state += prob1;
+		state += prob2;
+
+		auto result = py::array_t<float>(state.size());
+		auto buf = result.request();
+		float* ptr = (float*)buf.ptr;
+
+		for (int i = 0; i < state.size(); ++i) {
+			ptr[i] = state[i];
+		}
+		return result;
+	}
+
 
     // (0-56 color cards 转 3-17 value cards)
     vector<int> toValue(const vector<int>& cards) {
@@ -1114,7 +1144,8 @@ PYBIND11_MODULE(env, m) {
         .def("get_last_outcards", &Env::getLastCards)
         .def("get_last_two_cards", &Env::getLastTwoCards)
         .def("get_last_outcategory_idx", &Env::getLastCategory)
-        .def("get_lord_cnt", &Env::getLordCnt);
+        .def("get_lord_cnt", &Env::getLordCnt)
+		.def("get_state_prob_manual", &Env::getStateProbManual);
     m.def("get_combinations_recursive", &get_combinations_recursive);
     m.def("get_combinations_nosplit", &get_combinations_nosplit);
 }
