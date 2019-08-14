@@ -59,11 +59,11 @@ public:
     Env(long long int seed = -1) {
         this->reset();
         if (seed == -1) {
-            std::cout << "seeding with " << std::random_device{}() << std::endl;
+            //std::cout << "seeding with " << std::random_device{}() << std::endl;
             this->g = std::mt19937(std::random_device{}());
         }
         else {
-            std::cout << "seeding with " << seed << std::endl;
+            //std::cout << "seeding with " << seed << std::endl;
             this->g = std::mt19937(seed);
         }
     };
